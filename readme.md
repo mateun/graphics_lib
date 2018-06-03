@@ -1,5 +1,5 @@
-##### GrahpicsLib
-#### Introduction
+# GrahpicsLib
+## Introduction
 
 This is a simple graphics library which is built mainly for learning purposes and to understand
 how things work under the hood. 
