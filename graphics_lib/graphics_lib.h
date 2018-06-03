@@ -10,11 +10,31 @@
 #define GRAPHICS_LIB_API __declspec(dllimport)
 #endif
 
+#include <Windows.h>
+#include <d3d9.h>
+
 // This class is exported from the graphics_lib.dll
-class GRAPHICS_LIB_API Cgraphics_lib {
+class GRAPHICS_LIB_API FBGraphics {
 public:
-	Cgraphics_lib(void);
-	// TODO: add your methods here.
+	virtual ~FBGraphics() {
+		OutputDebugString(L"<<<<<<<<<<<<<<< in base destr.");
+	}
+	virtual void clear(int red, int green, int blue) = 0;
+	virtual void swapBuffers() = 0;
+	virtual void renderTriangleList() = 0;
+};
+
+class GRAPHICS_LIB_API DX9Graphics : public FBGraphics {
+public:
+	DX9Graphics(HWND);
+	~DX9Graphics() override;
+	void clear(int, int, int) override;
+	void swapBuffers() override;
+	void renderTriangleList() override;
+
+private:
+	LPDIRECT3D9 _d3d9;
+	LPDIRECT3DDEVICE9 _d3d9dev;
 };
 
 extern GRAPHICS_LIB_API int ngraphics_lib;
