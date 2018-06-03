@@ -4,6 +4,10 @@
 #include "stdafx.h"
 #include "TestGameWin32.h"
 #include <graphics_lib.h>
+#include <triangle.h>
+#include <basic_3d_objects.h>
+#include <importer.h>
+#include <string>
 
 #define MAX_LOADSTRING 100
 
@@ -13,6 +17,7 @@ WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 
 FBGraphics* graphics;							// Our graphics library instance
+std::vector<FBTriangle> modelTris;				// Our single global model for now :) 
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -22,7 +27,18 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 void gameFrame() {
 	graphics->clear(10, 10, 10);
-	graphics->renderTriangleList();
+	auto tris = GetCube();
+
+	static float rotY = 0.0f; rotY += 0.005f;
+	//graphics->renderTriangleList(tris, XMVectorSet(-10, 0, 0, 0), XMVectorSet(0, 1, 0, 0), rotY, 1, XMVectorSet(1.0f, 0.2f, 0.2f, 0.0f));
+	//graphics->renderTriangleList(tris, XMVectorSet(10, 0, 0, 0), XMVectorSet(0, 0.5f, 0.5f, 0), rotY*1.3, 1, XMVectorSet(0.2f, 0.2f, 1.0f, 0.0f));
+
+	graphics->renderTriangleList(modelTris, XMVectorSet(0, 0, 0,0), XMVectorSet(0, 1, 0, 0), rotY*1.0f, 1, 1, 1, XMVectorSet(0.7f, 0.3f, 0.6f, 0));
+
+	for (auto i = 0; i < 20; i++) {
+		graphics->renderTriangleList(tris, XMVectorSet(-10, -3, -20 + (i*10), 0), XMVectorSet(0, 1, 0, 0), rotY*0, 0.2f, 1.0f, 0.2f,
+			XMVectorSet(0.2f, 1.0f, 0.2f, 0.0f));
+	}
 	graphics->swapBuffers();
 }
 
@@ -49,7 +65,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TESTGAMEWIN32));
 
-	// Init graphics library
+	modelTris = importModel("D:/Projects/C++/graphics_lib/x64/Debug/model.obj");
 
     MSG msg;
 
@@ -120,7 +136,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // Store instance handle in our global variable
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+      CW_USEDEFAULT, 0, 800, 600, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {

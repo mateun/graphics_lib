@@ -20,6 +20,7 @@ GRAPHICS_LIB_API int fngraphics_lib(void)
 
 void DX9Graphics::clear(int r, int g, int b) {
 	_d3d9dev->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(r, g, b), 1.0f, 0);
+	_d3d9dev->Clear(0, NULL, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(r, g, b), 1.0f, 0);
 
 }
 
@@ -27,27 +28,56 @@ void DX9Graphics::swapBuffers() {
 	_d3d9dev->Present(NULL, NULL, NULL, NULL);
 }
 
-void DX9Graphics::renderTriangleList() {
-#define CUSTOMFVF (D3DFVF_XYZ | D3DFVF_DIFFUSE)
+void DX9Graphics::renderTriangleList(std::vector<FBTriangle> triangles, DirectX::XMVECTOR position, 
+												DirectX::XMVECTOR rotAxis, 
+												float rotRadians,
+												float scaleX,
+												float scaleY,
+												float scaleZ,
+												DirectX::XMVECTOR materialDiffuseColor) {
+	#define CUSTOMFVF (D3DFVF_XYZ | D3DFVF_NORMAL)
 
-
-struct customvertex {
+	struct customvertex {
 		FLOAT x, y, z;
-		DWORD color;
+		FLOAT nx, ny, nz;
 	};
 
-	customvertex vertices[] = {
-		{ 2.5f, -3, 0,  D3DCOLOR_XRGB(0, 0, 255)},
-		{ 0, 3, 0,  D3DCOLOR_XRGB(0, 255, 0) },
-		{ -2.5f, -3, 0,  D3DCOLOR_XRGB(255, 0, 0) },
-	};
+	std::vector<customvertex> vertices;
+	for each (const auto& t in triangles) {
+		customvertex v1 = { XMVectorGetX(t.p1), XMVectorGetY(t.p1), XMVectorGetZ(t.p1), XMVectorGetX(t.n1), XMVectorGetY(t.n1), XMVectorGetZ(t.n1) };
+		customvertex v2 = { XMVectorGetX(t.p2), XMVectorGetY(t.p2), XMVectorGetZ(t.p2), XMVectorGetX(t.n2), XMVectorGetY(t.n2), XMVectorGetZ(t.n2) };
+		customvertex v3 = { XMVectorGetX(t.p3), XMVectorGetY(t.p3), XMVectorGetZ(t.p3), XMVectorGetX(t.n3), XMVectorGetY(t.n3), XMVectorGetZ(t.n3) };
+		vertices.push_back(v1);
+		vertices.push_back(v2);
+		vertices.push_back(v3);
+	}
+	
 
 	LPDIRECT3DVERTEXBUFFER9 vb;
-	_d3d9dev->CreateVertexBuffer(3 * sizeof(customvertex), 0, CUSTOMFVF, D3DPOOL_MANAGED, &vb, NULL);
+	_d3d9dev->CreateVertexBuffer(3 * triangles.size() * sizeof(customvertex), 0, CUSTOMFVF, D3DPOOL_MANAGED, &vb, NULL);
 	VOID* pvoid;
 	vb->Lock(0, 0, (void**)&pvoid, 0);
-	memcpy(pvoid, vertices, sizeof(vertices));
+	memcpy(pvoid, vertices.data(), sizeof(customvertex) * triangles.size() * 3);
 	vb->Unlock();
+
+
+	// create directional light
+	D3DLIGHT9 dlight;
+	D3DMATERIAL9 material;
+	ZeroMemory(&dlight, sizeof(dlight));
+	dlight.Type = D3DLIGHT_DIRECTIONAL;
+	dlight.Diffuse = D3DXCOLOR(1.8f, 1.8f, 1.8f, 1.0f);
+	dlight.Direction = *(D3DXVECTOR3*)(&XMVectorSet(0.2f, -0.6f, -0.0f, 0));
+	
+	_d3d9dev->SetLight(0, &dlight);
+	_d3d9dev->LightEnable(0, TRUE);
+
+	ZeroMemory(&material, sizeof(material));
+	material.Diffuse = *(D3DXCOLOR*)(&materialDiffuseColor);
+	material.Ambient = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+	
+	_d3d9dev->SetMaterial(&material);
+
 
 	_d3d9dev->BeginScene();
 
@@ -56,23 +86,29 @@ struct customvertex {
 	// pipeline transformed
 	static float rot = 0; rot += 0.005f;
 	
-	DirectX::XMMATRIX world = DirectX::XMMatrixRotationY(rot);
-	_d3d9dev->SetTransform(D3DTS_WORLD, (D3DXMATRIX*)&world);
+	DirectX::XMMATRIX mrot = DirectX::XMMatrixRotationAxis(rotAxis, rotRadians);
+	DirectX::XMMATRIX mtransl = DirectX::XMMatrixTranslationFromVector(position);
+	DirectX::XMMATRIX mscale = DirectX::XMMatrixScaling(scaleX, scaleY, scaleZ);
+	DirectX::XMMATRIX mworld = DirectX::XMMatrixMultiply(mrot, mscale);
+	mworld = DirectX::XMMatrixMultiply(mworld, mtransl);
+	_d3d9dev->SetTransform(D3DTS_WORLD, (D3DXMATRIX*)&mworld);
 
-	DirectX::XMVECTOR eye = DirectX::XMVectorSet(0, 0, 10.0f, 0);
+	DirectX::XMVECTOR eye = DirectX::XMVectorSet(0, 4.0f, -3.1f, 0);
 	DirectX::XMVECTOR at = DirectX::XMVectorSet(0, 0, 0, 0);
-	DirectX::XMVECTOR up = DirectX::XMVectorSet(0, 1, 0, 0);
+	DirectX::XMVECTOR up = DirectX::XMVectorSet(0, 1, 0, 1);
 	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(eye, at, up);
 	_d3d9dev->SetTransform(D3DTS_VIEW, (D3DXMATRIX*)&view);
 
-	DirectX::XMMATRIX proj = DirectX::XMMatrixPerspectiveFovLH(1.2f, 800 / 600, 1, 100);
+	DirectX::XMMATRIX proj = DirectX::XMMatrixPerspectiveFovLH(1.57f,(float) 800.0f/600.0f , 1, 100);
 	_d3d9dev->SetTransform(D3DTS_PROJECTION, (D3DXMATRIX*)&proj);
 
-	_d3d9dev->SetRenderState(D3DRS_LIGHTING, FALSE);
-	_d3d9dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	_d3d9dev->SetRenderState(D3DRS_LIGHTING, TRUE);
+	_d3d9dev->SetRenderState(D3DRS_ZENABLE, TRUE);
+	_d3d9dev->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(200, 200, 200));
+	_d3d9dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 
 	_d3d9dev->SetStreamSource(0, vb, 0, sizeof(customvertex));
-	_d3d9dev->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 1);
+	_d3d9dev->DrawPrimitive(D3DPT_TRIANGLELIST, 0, triangles.size());
 
 	_d3d9dev->EndScene();
 	
@@ -90,6 +126,9 @@ DX9Graphics::DX9Graphics(HWND hwnd)
 	d3dpp.Windowed = true;
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dpp.hDeviceWindow = hwnd;
+	d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
+	d3dpp.EnableAutoDepthStencil = TRUE;
+	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
 
 	HRESULT result = _d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &d3dpp, &_d3d9dev);
 }

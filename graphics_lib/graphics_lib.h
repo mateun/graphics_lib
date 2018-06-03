@@ -12,6 +12,11 @@
 
 #include <Windows.h>
 #include <d3d9.h>
+#include <vector>
+#include <DirectXMath.h>
+#include "triangle.h"
+
+
 
 // This class is exported from the graphics_lib.dll
 class GRAPHICS_LIB_API FBGraphics {
@@ -21,7 +26,11 @@ public:
 	}
 	virtual void clear(int red, int green, int blue) = 0;
 	virtual void swapBuffers() = 0;
-	virtual void renderTriangleList() = 0;
+	virtual void renderTriangleList(std::vector<FBTriangle>, DirectX::XMVECTOR position, DirectX::XMVECTOR rotationAxis, float rotRadians, 
+										float scaleX,
+										float scaleY,
+										float scaleZ,
+										DirectX::XMVECTOR materialDiffuseColor) = 0;
 };
 
 class GRAPHICS_LIB_API DX9Graphics : public FBGraphics {
@@ -30,7 +39,11 @@ public:
 	~DX9Graphics() override;
 	void clear(int, int, int) override;
 	void swapBuffers() override;
-	void renderTriangleList() override;
+	void renderTriangleList(std::vector<FBTriangle>, DirectX::XMVECTOR position, DirectX::XMVECTOR rotationAxis, float rotRadians, 
+						float scaleX,
+						float scaleY,
+						float scaleZ,
+						DirectX::XMVECTOR materialDiffuseColor) override;
 
 private:
 	LPDIRECT3D9 _d3d9;

@@ -21,4 +21,15 @@ implementation:
 * render to texture
 * flipping the backbuffer to present the rendered scene
 
+### GraphicsLib API
+
+The following functions are available from the FBGraphics object: 
+
+clear(int r, int g, int b): clears the backbuffer to the given rgb color (max 255).
+renderTriangleList(std::vector<Triangle> triangles): renders all the given trianlges to the backbuffer.
+renderMesh(const Mesh& mesh): renders a "mesh" structure which contains all the vertices, indices and materials for a given mesh.
+
+
+swapBuffers(): flips the backbuffer with the frontbuffer, effectively making the contents of the backbuffer visible. 
+
 
