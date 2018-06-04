@@ -99,7 +99,7 @@ void DX9Graphics::renderTriangleList(std::vector<FBTriangle> triangles, DirectX:
 	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(eye, at, up);
 	_d3d9dev->SetTransform(D3DTS_VIEW, (D3DXMATRIX*)&view);
 
-	DirectX::XMMATRIX proj = DirectX::XMMatrixPerspectiveFovLH(1.57f,(float) 800.0f/600.0f , 1, 100);
+	DirectX::XMMATRIX proj = DirectX::XMMatrixPerspectiveFovLH(1.57f, (float) 800.0f/600.0f , 1, 100);
 	_d3d9dev->SetTransform(D3DTS_PROJECTION, (D3DXMATRIX*)&proj);
 
 	_d3d9dev->SetRenderState(D3DRS_LIGHTING, TRUE);

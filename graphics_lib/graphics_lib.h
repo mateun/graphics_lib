@@ -4,11 +4,8 @@
 // that uses this DLL. This way any other project whose source files include this file see 
 // GRAPHICS_LIB_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
-#ifdef GRAPHICS_LIB_EXPORTS
-#define GRAPHICS_LIB_API __declspec(dllexport)
-#else
-#define GRAPHICS_LIB_API __declspec(dllimport)
-#endif
+#pragma once
+#include "api.h"
 
 #include <Windows.h>
 #include <d3d9.h>

@@ -8,6 +8,9 @@
 #include <basic_3d_objects.h>
 #include <importer.h>
 #include <string>
+#include <scenegraph.h>
+#include <scene_node.h>
+#include "Player.h"
 
 #define MAX_LOADSTRING 100
 
@@ -18,6 +21,7 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 
 FBGraphics* graphics;							// Our graphics library instance
 std::vector<FBTriangle> modelTris;				// Our single global model for now :) 
+FBSceneGraph* sceneGraph = nullptr;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -33,12 +37,17 @@ void gameFrame() {
 	//graphics->renderTriangleList(tris, XMVectorSet(-10, 0, 0, 0), XMVectorSet(0, 1, 0, 0), rotY, 1, XMVectorSet(1.0f, 0.2f, 0.2f, 0.0f));
 	//graphics->renderTriangleList(tris, XMVectorSet(10, 0, 0, 0), XMVectorSet(0, 0.5f, 0.5f, 0), rotY*1.3, 1, XMVectorSet(0.2f, 0.2f, 1.0f, 0.0f));
 
-	graphics->renderTriangleList(modelTris, XMVectorSet(0, 0, 0,0), XMVectorSet(0, 1, 0, 0), rotY*1.0f, 1, 1, 1, XMVectorSet(0.7f, 0.3f, 0.6f, 0));
+	//graphics->renderTriangleList(modelTris, XMVectorSet(0, 0, 0,0), XMVectorSet(0, 1, 0, 0), rotY*1.0f, 1, 1, 1, XMVectorSet(0.7f, 0.3f, 0.6f, 0));
 
 	for (auto i = 0; i < 20; i++) {
 		graphics->renderTriangleList(tris, XMVectorSet(-10, -3, -20 + (i*10), 0), XMVectorSet(0, 1, 0, 0), rotY*0, 0.2f, 1.0f, 0.2f,
 			XMVectorSet(0.2f, 1.0f, 0.2f, 0.0f));
 	}
+
+	// now lets test the scenegraph as well
+	// TODO calculate real frametime to pass into scenegraph
+	sceneGraph->update(16);
+	sceneGraph->render(graphics);
 	graphics->swapBuffers();
 }
 
@@ -66,6 +75,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TESTGAMEWIN32));
 
 	modelTris = importModel("D:/Projects/C++/graphics_lib/x64/Debug/model.obj");
+	sceneGraph = new TreeSceneGraph();
+	FBSceneNode* rootNode = new FBSceneNode();
+	sceneGraph->addRootNode(rootNode);
+
+	FBSceneNode* playerNode = new Player(modelTris);
+	playerNode->position = XMVectorSet(2, 0, 0, 0);
+	rootNode->addChild(playerNode);
+
 
     MSG msg;
 
