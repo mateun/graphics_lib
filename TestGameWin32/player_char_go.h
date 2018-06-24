@@ -12,14 +12,9 @@ class PlayerChar : public FBGameObject {
 
 
 public:
-	XMFLOAT3 _position;
-	float _scale;
 	
 	void update(long ft) override;
 	void render(FBGraphics* gr, FBCamera* camera) override;
-
-
-private: 
 	
 };
 

@@ -55,7 +55,6 @@ void DX9Graphics::renderTriangleList(std::vector<FBTriangle> triangles, DirectX:
 	memcpy(pvoid, vertices.data(), sizeof(customvertex) * triangles.size() * 3);
 	vb->Unlock();
 
-
 	// create directional light
 	D3DLIGHT9 dlight;
 	D3DMATERIAL9 material;
@@ -72,10 +71,7 @@ void DX9Graphics::renderTriangleList(std::vector<FBTriangle> triangles, DirectX:
 	material.Ambient = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
 	
 	_d3d9dev->SetMaterial(&material);
-
-
 	_d3d9dev->BeginScene();
-
 	_d3d9dev->SetFVF(CUSTOMFVF);
 
 	// pipeline transformed

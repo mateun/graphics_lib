@@ -14,6 +14,8 @@
 #include <camera.h>
 #include "player_char_go.h"
 #include <scene.h>
+#include "ship.h"
+#include "terrain.h"
 
 #define MAX_LOADSTRING 100
 
@@ -103,26 +105,41 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	
 	rootNode->addChild(playerNode);
 
-	camera = new FBCamera(XMVectorSet(0, 5, -15, 0), XMVectorSet(0, 0, 0, 0), XMVectorSet(0, 1, 0, 0), 1.5f, (float) 800.0f/600.0f, 1, 200);
+	camera = new FBCamera(XMVectorSet(0, 5, -10, 0), 
+		XMVectorSet(0, 0, 0, 0), 
+		XMVectorSet(0, 1, 0, 0), 
+		1.5f, (float) 800.0f/600.0f, 1, 200);
 	
 	playerChar = new PlayerChar();
-	XMStoreFloat3(&playerChar->_position, XMVectorSet(5, 0, -5, 0));
+	playerChar->setPosition(5, 0, -5);
 	playerChar->meshTriangles = modelTris;
-	playerChar->_scale = 1.0f;
+	playerChar->setScale(1.0f);
 
 	PlayerChar* soldier2 = new PlayerChar();
-	XMStoreFloat3(&soldier2->_position, XMVectorSet(3, 0, 3, 0));
-	soldier2->_scale = 1.0f;
+	soldier2->setPosition(3, 0, 3);
+	soldier2->setScale(1.0f);
 	soldier2->meshTriangles = importModel("D:/Projects/C++/graphics_lib/x64/Debug/soldier.obj");
 
-	level1 = new FBScene();
-	level1->addGameObject(playerChar);
-	level1->addGameObject(soldier2);
-	level1->addCamera(camera);
-	level1->setMainCamera(camera);
+	Ship* ship = new Ship();
+	ship->setPosition(-3, 5, 3);
+	ship->setScale(1);
+	ship->meshTriangles = importModel("D:/Projects/C++/graphics_lib/x64/Debug/ship_low_poly.obj");
+
+	Terrain* terrain = new Terrain();
+	terrain->setPosition(0, -0.5f, 0);
+	terrain->setScale(5, 1, 5);
+	terrain->meshTriangles = importModel("D:/Projects/C++/graphics_lib/x64/Debug/terrain.obj");
+
 
 	
-	
+
+	level1 = new FBScene();
+	level1->addGameObject(terrain);
+	level1->addGameObject(playerChar);
+	level1->addGameObject(soldier2);
+	level1->addGameObject(ship);
+	level1->addCamera(camera);
+	level1->setMainCamera(camera);
 
     MSG msg;
 
