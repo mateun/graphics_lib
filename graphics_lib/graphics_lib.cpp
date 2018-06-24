@@ -28,13 +28,11 @@ void DX9Graphics::swapBuffers() {
 	_d3d9dev->Present(NULL, NULL, NULL, NULL);
 }
 
-void DX9Graphics::renderTriangleList(std::vector<FBTriangle> triangles, DirectX::XMVECTOR position, 
-												DirectX::XMVECTOR rotAxis, 
+void DX9Graphics::renderTriangleList(std::vector<FBTriangle> triangles, DirectX::FXMVECTOR position, 
+												DirectX::FXMVECTOR rotAxis, 
 												float rotRadians,
-												float scaleX,
-												float scaleY,
-												float scaleZ,
-												DirectX::XMVECTOR materialDiffuseColor) {
+												DirectX::FXMVECTOR scale,
+												DirectX::FXMVECTOR materialDiffuseColor) {
 	#define CUSTOMFVF (D3DFVF_XYZ | D3DFVF_NORMAL)
 
 	struct customvertex {
@@ -44,9 +42,9 @@ void DX9Graphics::renderTriangleList(std::vector<FBTriangle> triangles, DirectX:
 
 	std::vector<customvertex> vertices;
 	for each (const auto& t in triangles) {
-		customvertex v1 = { XMVectorGetX(t.p1), XMVectorGetY(t.p1), XMVectorGetZ(t.p1), XMVectorGetX(t.n1), XMVectorGetY(t.n1), XMVectorGetZ(t.n1) };
-		customvertex v2 = { XMVectorGetX(t.p2), XMVectorGetY(t.p2), XMVectorGetZ(t.p2), XMVectorGetX(t.n2), XMVectorGetY(t.n2), XMVectorGetZ(t.n2) };
-		customvertex v3 = { XMVectorGetX(t.p3), XMVectorGetY(t.p3), XMVectorGetZ(t.p3), XMVectorGetX(t.n3), XMVectorGetY(t.n3), XMVectorGetZ(t.n3) };
+		customvertex v1 = { t.p1.x, t.p1.y, t.p1.z, t.n1.x, t.n1.y, t.n1.z };
+		customvertex v2 = { t.p2.x, t.p2.y, t.p2.z, t.n2.x, t.n2.y, t.n2.z };
+		customvertex v3 = { t.p3.x, t.p3.y, t.p3.z, t.n3.x, t.n3.y, t.n3.z };
 		vertices.push_back(v1);
 		vertices.push_back(v2);
 		vertices.push_back(v3);
@@ -88,7 +86,7 @@ void DX9Graphics::renderTriangleList(std::vector<FBTriangle> triangles, DirectX:
 	
 	DirectX::XMMATRIX mrot = DirectX::XMMatrixRotationAxis(rotAxis, rotRadians);
 	DirectX::XMMATRIX mtransl = DirectX::XMMatrixTranslationFromVector(position);
-	DirectX::XMMATRIX mscale = DirectX::XMMatrixScaling(scaleX, scaleY, scaleZ);
+	DirectX::XMMATRIX mscale = DirectX::XMMatrixScaling(XMVectorGetX(scale), XMVectorGetY(scale), XMVectorGetZ(scale));
 	DirectX::XMMATRIX mworld = DirectX::XMMatrixMultiply(mrot, mscale);
 	mworld = DirectX::XMMatrixMultiply(mworld, mtransl);
 	_d3d9dev->SetTransform(D3DTS_WORLD, (D3DXMATRIX*)&mworld);

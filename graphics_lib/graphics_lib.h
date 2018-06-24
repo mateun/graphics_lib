@@ -23,11 +23,9 @@ public:
 	}
 	virtual void clear(int red, int green, int blue) = 0;
 	virtual void swapBuffers() = 0;
-	virtual void renderTriangleList(std::vector<FBTriangle>, DirectX::XMVECTOR position, DirectX::XMVECTOR rotationAxis, float rotRadians, 
-										float scaleX,
-										float scaleY,
-										float scaleZ,
-										DirectX::XMVECTOR materialDiffuseColor) = 0;
+	virtual void renderTriangleList(std::vector<FBTriangle>, DirectX::FXMVECTOR position, DirectX::FXMVECTOR rotationAxis, float rotRadians, 
+										DirectX::FXMVECTOR scale,
+										DirectX::FXMVECTOR materialDiffuseColor) = 0;
 };
 
 class GRAPHICS_LIB_API DX9Graphics : public FBGraphics {
@@ -36,11 +34,9 @@ public:
 	~DX9Graphics() override;
 	void clear(int, int, int) override;
 	void swapBuffers() override;
-	void renderTriangleList(std::vector<FBTriangle>, DirectX::XMVECTOR position, DirectX::XMVECTOR rotationAxis, float rotRadians, 
-						float scaleX,
-						float scaleY,
-						float scaleZ,
-						DirectX::XMVECTOR materialDiffuseColor) override;
+	void renderTriangleList(std::vector<FBTriangle>, DirectX::FXMVECTOR position, DirectX::FXMVECTOR rotationAxis, float rotRadians, 
+						DirectX::FXMVECTOR scale,
+						DirectX::FXMVECTOR materialDiffuseColor) override;
 
 private:
 	LPDIRECT3D9 _d3d9;

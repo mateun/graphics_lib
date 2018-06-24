@@ -6,12 +6,12 @@ class FBTriangle
 {
 public:
 
-	XMVECTOR p1;
-	XMVECTOR p2;
-	XMVECTOR p3;
+	XMFLOAT3 p1;
+	XMFLOAT3 p2;
+	XMFLOAT3 p3;
 
-	XMVECTOR n1;
-	XMVECTOR n2;
-	XMVECTOR n3;
+	XMFLOAT3 n1;
+	XMFLOAT3 n2;
+	XMFLOAT3 n3;
 
 };

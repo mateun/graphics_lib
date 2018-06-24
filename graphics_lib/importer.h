@@ -42,12 +42,12 @@ std::vector<FBTriangle> importModel(const std::string& path) {
 			aiVector3D n3 = mesh->mNormals[i2];
 
 			FBTriangle tri;
-			tri.p1 = XMVectorSet(p1.x, p1.y, p1.z, 0);
-			tri.p2 = XMVectorSet(p2.x, p2.y, p2.z, 0);
-			tri.p3 = XMVectorSet(p3.x, p3.y, p3.z, 0);
-			tri.n1 = XMVectorSet(n1.x, n1.y, n1.z, 0);
-			tri.n2 = XMVectorSet(n2.x, n2.y, n2.z, 0);
-			tri.n3 = XMVectorSet(n3.x, n3.y, n3.z, 0);
+			tri.p1 = XMFLOAT3(p1.x, p1.y, p1.z);
+			tri.p2 = XMFLOAT3(p2.x, p2.y, p2.z);
+			tri.p3 = XMFLOAT3(p3.x, p3.y, p3.z);
+			tri.n1 = XMFLOAT3(n1.x, n1.y, n1.z);
+			tri.n2 = XMFLOAT3(n2.x, n2.y, n2.z);
+			tri.n3 = XMFLOAT3(n3.x, n3.y, n3.z);
 			tris.push_back(tri);
 		}
 	

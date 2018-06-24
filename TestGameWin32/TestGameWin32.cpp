@@ -40,7 +40,7 @@ void gameFrame() {
 	//graphics->renderTriangleList(modelTris, XMVectorSet(0, 0, 0,0), XMVectorSet(0, 1, 0, 0), rotY*1.0f, 1, 1, 1, XMVectorSet(0.7f, 0.3f, 0.6f, 0));
 
 	for (auto i = 0; i < 20; i++) {
-		graphics->renderTriangleList(tris, XMVectorSet(-10, -3, -20 + (i*10), 0), XMVectorSet(0, 1, 0, 0), rotY*0, 0.2f, 1.0f, 0.2f,
+		graphics->renderTriangleList(tris, XMVectorSet(-10, -3, -20 + (i*10), 0), XMVectorSet(0, 1, 0, 0), rotY*0, XMVectorSet(0.2f, 1.0f, 0.2f, 0.0f),
 			XMVectorSet(0.2f, 1.0f, 0.2f, 0.0f));
 	}
 
@@ -80,7 +80,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	sceneGraph->addRootNode(rootNode);
 
 	FBSceneNode* playerNode = new Player(modelTris);
-	playerNode->position = XMVectorSet(2, 0, 0, 0);
+	playerNode->position = XMFLOAT3(2, 0, 0);
+	
 	rootNode->addChild(playerNode);
 
 

@@ -11,7 +11,7 @@ public:
 	void addChild(FBSceneNode* child);
 	virtual void update(long frameTime);
 	virtual void render(FBGraphics* );
-	XMVECTOR position;
+	XMFLOAT3 position;
 	
 private:
 	std::vector<FBSceneNode*> _children;
