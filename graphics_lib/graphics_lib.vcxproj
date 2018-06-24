@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClInclude Include="api.h" />
     <ClInclude Include="basic_3d_objects.h" />
+    <ClInclude Include="camera.h" />
     <ClInclude Include="game_object.h" />
     <ClInclude Include="graphics_lib.h" />
     <ClInclude Include="importer.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="triangle.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

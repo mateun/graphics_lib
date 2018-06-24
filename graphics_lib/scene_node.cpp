@@ -8,9 +8,9 @@ void FBSceneNode::update(long frameTime) {
 	}
 }
 
-void FBSceneNode::render(FBGraphics* graphics) {
+void FBSceneNode::render(FBGraphics* graphics, FBCamera cam) {
 	for each (const auto& c in _children) {
-		c->render(graphics);
+		c->render(graphics, cam);
 	}
 }
 

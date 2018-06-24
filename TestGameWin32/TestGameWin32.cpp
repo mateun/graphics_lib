@@ -11,6 +11,7 @@
 #include <scenegraph.h>
 #include <scene_node.h>
 #include "Player.h"
+#include <camera.h>
 
 #define MAX_LOADSTRING 100
 
@@ -22,6 +23,8 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 FBGraphics* graphics;							// Our graphics library instance
 std::vector<FBTriangle> modelTris;				// Our single global model for now :) 
 FBSceneGraph* sceneGraph = nullptr;
+FBCamera* camera;								// The camera through which everything is rendered!
+
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -30,6 +33,14 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 void gameFrame() {
+
+	// move the camera forward...
+	static float camZ = 0; camZ += 0.00005f;
+	
+	XMVECTOR newPos = XMVectorAdd(camera->GetPosition(), XMVectorSet(0, camZ, 0, 0));
+	camera->SetPosition(newPos);
+
+
 	graphics->clear(10, 10, 10);
 	auto tris = GetCube();
 
@@ -41,13 +52,13 @@ void gameFrame() {
 
 	for (auto i = 0; i < 20; i++) {
 		graphics->renderTriangleList(tris, XMVectorSet(-10, -3, -20 + (i*10), 0), XMVectorSet(0, 1, 0, 0), rotY*0, XMVectorSet(0.2f, 1.0f, 0.2f, 0.0f),
-			XMVectorSet(0.2f, 1.0f, 0.2f, 0.0f));
+			XMVectorSet(0.2f, 1.0f, 0.2f, 0.0f), *camera);
 	}
 
 	// now lets test the scenegraph as well
 	// TODO calculate real frametime to pass into scenegraph
 	sceneGraph->update(16);
-	sceneGraph->render(graphics);
+	sceneGraph->render(graphics, *camera);
 	graphics->swapBuffers();
 }
 
@@ -84,6 +95,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	
 	rootNode->addChild(playerNode);
 
+	camera = new FBCamera(XMVectorSet(0, 2, -5, 0), XMVectorSet(0, 0, 0, 0), XMVectorSet(0, 1, 0, 0));
+	
 
     MSG msg;
 

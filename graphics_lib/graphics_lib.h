@@ -12,6 +12,7 @@
 #include <vector>
 #include <DirectXMath.h>
 #include "triangle.h"
+#include "camera.h"
 
 
 
@@ -25,7 +26,8 @@ public:
 	virtual void swapBuffers() = 0;
 	virtual void renderTriangleList(std::vector<FBTriangle>, DirectX::FXMVECTOR position, DirectX::FXMVECTOR rotationAxis, float rotRadians, 
 										DirectX::FXMVECTOR scale,
-										DirectX::FXMVECTOR materialDiffuseColor) = 0;
+										DirectX::FXMVECTOR materialDiffuseColor,
+										FBCamera camera) = 0;
 };
 
 class GRAPHICS_LIB_API DX9Graphics : public FBGraphics {
@@ -36,7 +38,8 @@ public:
 	void swapBuffers() override;
 	void renderTriangleList(std::vector<FBTriangle>, DirectX::FXMVECTOR position, DirectX::FXMVECTOR rotationAxis, float rotRadians, 
 						DirectX::FXMVECTOR scale,
-						DirectX::FXMVECTOR materialDiffuseColor) override;
+						DirectX::FXMVECTOR materialDiffuseColor,
+						FBCamera camera) override;
 
 private:
 	LPDIRECT3D9 _d3d9;

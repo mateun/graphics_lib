@@ -28,11 +28,8 @@ void DX9Graphics::swapBuffers() {
 	_d3d9dev->Present(NULL, NULL, NULL, NULL);
 }
 
-void DX9Graphics::renderTriangleList(std::vector<FBTriangle> triangles, DirectX::FXMVECTOR position, 
-												DirectX::FXMVECTOR rotAxis, 
-												float rotRadians,
-												DirectX::FXMVECTOR scale,
-												DirectX::FXMVECTOR materialDiffuseColor) {
+void DX9Graphics::renderTriangleList(std::vector<FBTriangle> triangles, DirectX::FXMVECTOR position, DirectX::FXMVECTOR rotationAxis, float rotRadians, DirectX::FXMVECTOR scale, DirectX::FXMVECTOR materialDiffuseColor, FBCamera camera)
+{
 	#define CUSTOMFVF (D3DFVF_XYZ | D3DFVF_NORMAL)
 
 	struct customvertex {
@@ -84,22 +81,20 @@ void DX9Graphics::renderTriangleList(std::vector<FBTriangle> triangles, DirectX:
 	// pipeline transformed
 	static float rot = 0; rot += 0.005f;
 	
-	DirectX::XMMATRIX mrot = DirectX::XMMatrixRotationAxis(rotAxis, rotRadians);
+	DirectX::XMMATRIX mrot = DirectX::XMMatrixRotationAxis(rotationAxis, rotRadians);
 	DirectX::XMMATRIX mtransl = DirectX::XMMatrixTranslationFromVector(position);
 	DirectX::XMMATRIX mscale = DirectX::XMMatrixScaling(XMVectorGetX(scale), XMVectorGetY(scale), XMVectorGetZ(scale));
 	DirectX::XMMATRIX mworld = DirectX::XMMatrixMultiply(mrot, mscale);
 	mworld = DirectX::XMMatrixMultiply(mworld, mtransl);
 	_d3d9dev->SetTransform(D3DTS_WORLD, (D3DXMATRIX*)&mworld);
 
-	DirectX::XMVECTOR eye = DirectX::XMVectorSet(0, 4.0f, -3.1f, 0);
-	DirectX::XMVECTOR at = DirectX::XMVectorSet(0, 0, 0, 0);
-	DirectX::XMVECTOR up = DirectX::XMVectorSet(0, 1, 0, 1);
-	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(eye, at, up);
-	_d3d9dev->SetTransform(D3DTS_VIEW, (D3DXMATRIX*)&view);
+	// camera stuff
+	_d3d9dev->SetTransform(D3DTS_VIEW, (D3DXMATRIX*)&camera.GetViewMatrix());
 
 	DirectX::XMMATRIX proj = DirectX::XMMatrixPerspectiveFovLH(1.57f, (float) 800.0f/600.0f , 1, 100);
-	_d3d9dev->SetTransform(D3DTS_PROJECTION, (D3DXMATRIX*)&proj);
+	_d3d9dev->SetTransform(D3DTS_PROJECTION, (D3DXMATRIX*)&camera.GetProjectionMatrix());
 
+	// Set some renderflags... TODO move into settable parameter of some form. 
 	_d3d9dev->SetRenderState(D3DRS_LIGHTING, TRUE);
 	_d3d9dev->SetRenderState(D3DRS_ZENABLE, TRUE);
 	_d3d9dev->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(200, 200, 200));

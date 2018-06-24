@@ -10,7 +10,7 @@ class GRAPHICS_LIB_API FBSceneNode {
 public:
 	void addChild(FBSceneNode* child);
 	virtual void update(long frameTime);
-	virtual void render(FBGraphics* );
+	virtual void render(FBGraphics*, FBCamera);
 	XMFLOAT3 position;
 	
 private:
