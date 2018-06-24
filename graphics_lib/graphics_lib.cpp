@@ -91,7 +91,6 @@ void DX9Graphics::renderTriangleList(std::vector<FBTriangle> triangles, DirectX:
 	// camera stuff
 	_d3d9dev->SetTransform(D3DTS_VIEW, (D3DXMATRIX*)&camera.GetViewMatrix());
 
-	DirectX::XMMATRIX proj = DirectX::XMMatrixPerspectiveFovLH(1.57f, (float) 800.0f/600.0f , 1, 100);
 	_d3d9dev->SetTransform(D3DTS_PROJECTION, (D3DXMATRIX*)&camera.GetProjectionMatrix());
 
 	// Set some renderflags... TODO move into settable parameter of some form. 
