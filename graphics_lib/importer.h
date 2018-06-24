@@ -16,7 +16,7 @@
 // selected objects only
 std::vector<FBTriangle> importModel(const std::string& path) {
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate |aiProcess_FlipWindingOrder );
+	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate /*|aiProcess_FlipWindingOrder*/ | aiProcess_FixInfacingNormals | aiProcess_MakeLeftHanded);
 
 	if (!scene) {
 		throw std::runtime_error("error importing the file");

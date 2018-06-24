@@ -113,7 +113,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	PlayerChar* soldier2 = new PlayerChar();
 	XMStoreFloat3(&soldier2->_position, XMVectorSet(3, 0, 3, 0));
 	soldier2->_scale = 1.0f;
-	soldier2->meshTriangles = GetCube();
+	soldier2->meshTriangles = importModel("D:/Projects/C++/graphics_lib/x64/Debug/soldier.obj");
 
 	level1 = new FBScene();
 	level1->addGameObject(playerChar);

@@ -62,7 +62,7 @@ void DX9Graphics::renderTriangleList(std::vector<FBTriangle> triangles, DirectX:
 	ZeroMemory(&dlight, sizeof(dlight));
 	dlight.Type = D3DLIGHT_DIRECTIONAL;
 	dlight.Diffuse = D3DXCOLOR(1.8f, 1.8f, 1.8f, 1.0f);
-	dlight.Direction = *(D3DXVECTOR3*)(&XMVectorSet(0.2f, -0.6f, -0.0f, 0));
+	dlight.Direction = *(D3DXVECTOR3*)(&XMVectorSet(0.7f, -0.3f, -0.0f, 0));
 	
 	_d3d9dev->SetLight(0, &dlight);
 	_d3d9dev->LightEnable(0, TRUE);
