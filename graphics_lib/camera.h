@@ -8,7 +8,7 @@ class GRAPHICS_LIB_API FBCamera {
 
 public:
 	FBCamera();
-	FBCamera(FXMVECTOR position, FXMVECTOR camTarget, FXMVECTOR camUp);
+	FBCamera(FXMVECTOR position, FXMVECTOR camTarget, FXMVECTOR camUp, float vfov, float ar, float near, float far);
 
 	XMMATRIX GetViewMatrix() const;
 	XMMATRIX GetProjectionMatrix() const;
@@ -17,6 +17,11 @@ public:
 	void SetCameraTarget(FXMVECTOR target) { XMStoreFloat3(&_camTarget, target); };
 	void SetCameraUpVector(FXMVECTOR up) { XMStoreFloat3(&_camUp, up); }
 
+	float _nearClip;
+	float _farClip;
+	float _vfov;
+	float _ar;
+	
 	XMVECTOR GetPosition() { return XMLoadFloat3(&_position); }
 	XMVECTOR GetTarget() { return XMLoadFloat3(&_camTarget); }
 	XMVECTOR GetCamUp() { return XMLoadFloat3(&_camUp); }
@@ -25,5 +30,6 @@ private:
 	XMFLOAT3 _position;
 	XMFLOAT3 _camTarget;
 	XMFLOAT3 _camUp;
+	
 		 
 };

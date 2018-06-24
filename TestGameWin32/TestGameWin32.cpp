@@ -95,7 +95,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	
 	rootNode->addChild(playerNode);
 
-	camera = new FBCamera(XMVectorSet(0, 2, -5, 0), XMVectorSet(0, 0, 0, 0), XMVectorSet(0, 1, 0, 0));
+	camera = new FBCamera(XMVectorSet(0, 0, -10, 0), XMVectorSet(0, 0, 0, 0), XMVectorSet(0, 1, 0, 0), 1.5f, (float) 800.0f/600.0f, 1, 200);
 	
 
     MSG msg;
