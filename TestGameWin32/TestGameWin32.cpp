@@ -12,6 +12,8 @@
 #include <scene_node.h>
 #include "Player.h"
 #include <camera.h>
+#include "player_char_go.h"
+#include <scene.h>
 
 #define MAX_LOADSTRING 100
 
@@ -24,6 +26,8 @@ FBGraphics* graphics;							// Our graphics library instance
 std::vector<FBTriangle> modelTris;				// Our single global model for now :) 
 FBSceneGraph* sceneGraph = nullptr;
 FBCamera* camera;								// The camera through which everything is rendered!
+PlayerChar* playerChar;							// A game object representing the player char
+FBScene* level1;								// A scene representing the first level of the game
 
 
 // Forward declarations of functions included in this code module:
@@ -35,7 +39,7 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 void gameFrame() {
 
 	// move the camera forward...
-	static float camZ = 0; camZ += 0.00005f;
+	static float camZ = 0; camZ += 0.0000f;
 	
 	XMVECTOR newPos = XMVectorAdd(camera->GetPosition(), XMVectorSet(0, camZ, 0, 0));
 	camera->SetPosition(newPos);
@@ -51,7 +55,7 @@ void gameFrame() {
 	//graphics->renderTriangleList(modelTris, XMVectorSet(0, 0, 0,0), XMVectorSet(0, 1, 0, 0), rotY*1.0f, 1, 1, 1, XMVectorSet(0.7f, 0.3f, 0.6f, 0));
 
 	for (auto i = 0; i < 20; i++) {
-		graphics->renderTriangleList(tris, XMVectorSet(-10, -3, -20 + (i*10), 0), XMVectorSet(0, 1, 0, 0), rotY*0, XMVectorSet(0.2f, 1.0f, 0.2f, 0.0f),
+		graphics->renderTriangleList(tris, XMVectorSet(-3, 1.0f, -20 + (i*10), 0), XMVectorSet(0, 1, 0, 0), rotY*0, XMVectorSet(0.2f, 1.0f, 0.2f, 0.0f),
 			XMVectorSet(0.2f, 1.0f, 0.2f, 0.0f), *camera);
 	}
 
@@ -59,6 +63,10 @@ void gameFrame() {
 	// TODO calculate real frametime to pass into scenegraph
 	sceneGraph->update(16);
 	sceneGraph->render(graphics, *camera);
+
+	//playerChar->render(graphics, camera);
+	level1->render(*graphics);
+
 	graphics->swapBuffers();
 }
 
@@ -91,11 +99,29 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	sceneGraph->addRootNode(rootNode);
 
 	FBSceneNode* playerNode = new Player(modelTris);
-	playerNode->position = XMFLOAT3(2, 0, 0);
+	playerNode->position = XMFLOAT3(1, 0, -4);
 	
 	rootNode->addChild(playerNode);
 
-	camera = new FBCamera(XMVectorSet(0, 0, -10, 0), XMVectorSet(0, 0, 0, 0), XMVectorSet(0, 1, 0, 0), 1.5f, (float) 800.0f/600.0f, 1, 200);
+	camera = new FBCamera(XMVectorSet(0, 5, -15, 0), XMVectorSet(0, 0, 0, 0), XMVectorSet(0, 1, 0, 0), 1.5f, (float) 800.0f/600.0f, 1, 200);
+	
+	playerChar = new PlayerChar();
+	XMStoreFloat3(&playerChar->_position, XMVectorSet(5, 0, -5, 0));
+	playerChar->meshTriangles = modelTris;
+	playerChar->_scale = 1.0f;
+
+	PlayerChar* soldier2 = new PlayerChar();
+	XMStoreFloat3(&soldier2->_position, XMVectorSet(3, 0, 3, 0));
+	soldier2->_scale = 1.0f;
+	soldier2->meshTriangles = GetCube();
+
+	level1 = new FBScene();
+	level1->addGameObject(playerChar);
+	level1->addGameObject(soldier2);
+	level1->addCamera(camera);
+	level1->setMainCamera(camera);
+
+	
 	
 
     MSG msg;
