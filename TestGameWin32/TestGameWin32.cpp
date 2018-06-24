@@ -217,7 +217,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
       return FALSE;
    }
 
-   graphics = new DX9Graphics(hWnd);
+   //graphics = new DX9Graphics(hWnd);
+   graphics = new DX11Graphics(hWnd, 800, 600);
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 

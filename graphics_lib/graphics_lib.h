@@ -13,6 +13,8 @@
 #include <DirectXMath.h>
 #include "triangle.h"
 #include "camera.h"
+#include <d3d11.h>
+#include <dxgi1_2.h>
 
 
 
@@ -44,6 +46,25 @@ public:
 private:
 	LPDIRECT3D9 _d3d9;
 	LPDIRECT3DDEVICE9 _d3d9dev;
+};
+
+class GRAPHICS_LIB_API DX11Graphics : public FBGraphics {
+public:
+	DX11Graphics(HWND, int w, int h); 
+	~DX11Graphics() override;
+	void clear(int, int, int) override;
+	void swapBuffers() override;
+	void renderTriangleList(std::vector<FBTriangle>, DirectX::FXMVECTOR position, DirectX::FXMVECTOR rotationAxis, float rotRadians,
+		DirectX::FXMVECTOR scale,
+		DirectX::FXMVECTOR materialDiffuseColor,
+		FBCamera camera) override;
+private:
+	ID3D11Device * _device;
+	ID3D11DeviceContext* _context;
+	IDXGISwapChain1* _swapChain;
+	ID3D11RenderTargetView* _rtv;
+	ID3D11Texture2D* _depthStencilBuffer;
+	ID3D11DepthStencilView* _depthStencilView;
 };
 
 extern GRAPHICS_LIB_API int ngraphics_lib;
